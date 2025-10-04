@@ -7,3 +7,13 @@
 
 - WS - PORT:8080
 - Frontend - PORT:3000
+
+## TODO
+
+- [ ] Add login
+- [ ] Saving players states
+- [ ] Interactive dialogs for game states
+- [ ] Converting to docker compose
+- [ ] Deploying docker
+- [ ] Redis for scalable game ws
+- [ ] Continued ...
