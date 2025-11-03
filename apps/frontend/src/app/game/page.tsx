@@ -110,7 +110,7 @@ export default function Game() {
     <div className="justify-center flex items-center min-h-screen w-screen bg-stone-900">
       <div className="flex gap-8 items-center justify-center lg:flex-row flex-col">
         <div className="flex flex-col gap-2 py-16 md:py-0">
-          <div>{opponent && <UserInfo email={opponent} />}</div>
+          <div>{opponent && <UserInfo id={opponent} />}</div>
           <ChessBoard
             chess={chess}
             setBoard={setBoard}
@@ -122,7 +122,7 @@ export default function Game() {
             mychance={mychance}
             isFlipped={color == "white" ? false : true}
           />
-          <div>{you && <UserInfo email={you} />}</div>
+          <div>{you && <UserInfo id={you} />}</div>
         </div>
 
         {/* side panel */}
@@ -136,7 +136,7 @@ export default function Game() {
               <div className="">
                 {opponent && (
                   <UserImage
-                    email={opponent}
+                    id={opponent}
                     color={color == "white" ? "black" : "white"}
                   />
                 )}
@@ -166,9 +166,13 @@ export default function Game() {
             {winner && (
               <div className="flex flex-col justify-center items-center mb-4 gap-2">
                 <Confetti width={width} height={height} recycle={false} />
-                <UserImage email={winner.user} color={winner.winner} />
+                {winner.user && (
+                  <UserImage id={winner.user} color={winner.winner} />
+                )}
                 <h3 className="text-lg font-bold uppercase">
-                  {winner.winner} wins
+                  {winner.winner === "DRAW"
+                    ? "It's a draw!"
+                    : `${winner.winner} wins`}
                 </h3>
               </div>
             )}
@@ -208,7 +212,7 @@ export default function Game() {
                               JSON.stringify({
                                 type: "LOGIN",
                                 payload: {
-                                  email: session.data?.user?.email,
+                                  id: session.data?.user?.id,
                                 },
                               })
                             );

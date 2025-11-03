@@ -11,8 +11,9 @@ wss.on("connection", function connection(ws) {
   ws.on("message", (data) => {
     const message = JSON.parse(data.toString());
     if (message.type == "LOGIN") {
-      if (message.payload.email) {
-        gameManager.addUser({ email: message.payload.email, socket: ws });
+      // TODO: payload must be user id
+      if (message.payload.id) {
+        gameManager.addUser({ id: message.payload.id, socket: ws });
       }
     }
   });

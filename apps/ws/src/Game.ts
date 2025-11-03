@@ -4,7 +4,7 @@ import { GAME_OVER, INIT_GAME, MOVE, INVALID_MOVE } from "./messages";
 import { db } from "./db";
 
 interface User {
-  email: string;
+  id: string;
   socket: WebSocket;
 }
 
@@ -26,8 +26,8 @@ export class Game {
         type: INIT_GAME,
         payload: {
           color: "white",
-          you: player1.email,
-          opponent: player2.email,
+          you: player1.id,
+          opponent: player2.id,
         },
       })
     );
@@ -36,8 +36,8 @@ export class Game {
         type: INIT_GAME,
         payload: {
           color: "black",
-          you: player2.email,
-          opponent: player1.email,
+          you: player2.id,
+          opponent: player1.id,
         },
       })
     );
@@ -95,47 +95,47 @@ export class Game {
     if (this.board.isGameOver()) {
       // TODO: handle draw state
       // Send the game over message to both players
-      let winner: User;
+      let winner: User | "DRAW";
 
-      if (this.moveCount % 2 === 0) {
-        winner = this.player2;
+      if (this.board.isDraw()) {
+        winner = "DRAW";
       } else {
-        winner = this.player1;
+        if (this.moveCount % 2 === 0) {
+          winner = this.player2;
+        } else {
+          winner = this.player1;
+        }
       }
 
       // save it to db
-      const player1ID = await db.user.findUnique({
-        where: {
-          email: this.player1.email,
+      await db.game.create({
+        data: {
+          whitePlayer: { connect: { id: this.player1.id } },
+          blackPlayer: { connect: { id: this.player2.id } },
+          status: "COMPLETED",
+          result:
+            winner == "DRAW"
+              ? "DRAW"
+              : this.moveCount % 2
+                ? "WHITE_WINS"
+                : "BLACK_WINS",
+          startAt: this.startTime,
+          endAt: new Date(),
+          currentFen: this.board.fen(),
         },
-        select: { id: true },
       });
-      const player2ID = await db.user.findUnique({
-        where: {
-          email: this.player2.email,
-        },
-        select: { id: true },
-      });
-      if (player1ID && player2ID) {
-        await db.game.create({
-          data: {
-            whitePlayer: { connect: { id: player1ID.id } },
-            blackPlayer: { connect: { id: player2ID.id } },
-            status: "COMPLETED",
-            result: this.moveCount % 2 ? "WHITE_WINS" : "BLACK_WINS",
-            startAt: this.startTime,
-            endAt: new Date(),
-            currentFen: this.board.fen(),
-          },
-        });
-      }
 
       this.player1.socket.send(
         JSON.stringify({
           type: GAME_OVER,
           payload: {
-            winner: this.board.turn() === "w" ? "black" : "white",
-            user: winner.email,
+            winner:
+              winner === "DRAW"
+                ? "DRAW"
+                : this.board.turn() === "w"
+                  ? "black"
+                  : "white",
+            user: winner === "DRAW" ? null : winner.id,
           },
         })
       );
@@ -143,8 +143,13 @@ export class Game {
         JSON.stringify({
           type: GAME_OVER,
           payload: {
-            winner: this.board.turn() === "w" ? "black" : "white",
-            user: winner.email,
+            winner:
+              winner === "DRAW"
+                ? "DRAW"
+                : this.board.turn() === "w"
+                  ? "black"
+                  : "white",
+            user: winner === "DRAW" ? null : winner.id,
           },
         })
       );

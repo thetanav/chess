@@ -9,11 +9,5 @@
 
 ## TODO
 
-- [x] Add login
-- [x] Saving players states
-- [x] Interactive dialogs for game states
-- [x] Converting to docker compose
-- [x] Deploying docker
 - [ ] Redis for scalable game ws
 - [ ] Save game
-- [ ] replace email to user.id in the ws

@@ -3,18 +3,18 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 
-export function UserInfo({ email }: { email: string }) {
+export function UserInfo({ id }: { id: string }) {
   const [name, setName] = useState("");
   const [image, setImage] = useState("");
 
   useEffect(() => {
-    fetch(`/user/${email}`)
+    fetch(`/user/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setImage(data.image);
         setName(data.name);
       });
-  }, [email]);
+  }, [id]);
 
   return (
     <div className="flex md:gap-3 gap-2 items-center select-none">
@@ -32,16 +32,16 @@ export function UserInfo({ email }: { email: string }) {
   );
 }
 
-export function UserImage({ email, color }: { email: string; color: string }) {
+export function UserImage({ id, color }: { id: string; color: string }) {
   const [image, setImage] = useState("");
 
   useEffect(() => {
-    fetch(`/user/${email}`)
+    fetch(`/user/${id}`)
       .then((res) => res.json())
       .then((data) => {
         setImage(data.image);
       });
-  }, [email]);
+  }, [id]);
 
   return (
     <div className="relative w-fit h-fit select-none">

@@ -3,7 +3,7 @@ import { INIT_GAME, MOVE, OPPONENT_DISCONNECTED } from "./messages";
 import { Game } from "./Game";
 
 interface User {
-  email: string;
+  id: string;
   socket: WebSocket;
 }
 
