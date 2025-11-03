@@ -17,6 +17,7 @@ export const useSocket = () => {
 
     return () => {
       ws.close();
+      console.log("ws dis");
     };
   }, []);
 

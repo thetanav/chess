@@ -16,7 +16,7 @@ wss.on("connection", function connection(ws) {
       }
     }
   });
-  ws.on("disconnect", () => gameManager.removeUser(ws));
+  ws.on("close", () => gameManager.removeUser(ws));
 });
 
 console.log(`Web Socket Server is running on port ${PORT}`);

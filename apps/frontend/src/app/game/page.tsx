@@ -14,6 +14,8 @@ import Image from "next/image";
 const INIT_GAME = "init_game";
 const MOVE = "move";
 const GAME_OVER = "game_over";
+const INVALID_MOVE = "invalid_move";
+const OPPONENT_DISCONNECTED = "oppoenent_disconnected";
 
 export default function Game() {
   const socket = useSocket();
@@ -30,12 +32,16 @@ export default function Game() {
   const [moves, setMoves] = useState<{ from: string; to: string }[]>([]);
   const [you, setYou] = useState("");
   const [opponent, setOpponent] = useState("");
-  const [moveAudio] = useState<HTMLAudioElement>(
-    () => new Audio("/move-self.mp3")
-  );
-  const [captureAudio] = useState<HTMLAudioElement>(
-    () => new Audio("/capture.mp3")
-  );
+  const [moveAudio] = useState<HTMLAudioElement | null>(() => {
+    if (typeof window === "undefined" || typeof Audio === "undefined")
+      return null;
+    return new Audio("/move-self.mp3");
+  });
+  const [captureAudio] = useState<HTMLAudioElement | null>(() => {
+    if (typeof window === "undefined" || typeof Audio === "undefined")
+      return null;
+    return new Audio("/capture.mp3");
+  });
   const session = useSession();
   const { width, height } = useWindowSize();
 
@@ -66,6 +72,10 @@ export default function Game() {
             captureAudio?.play();
             toast.error("You are in check");
           }
+          if (chess.isCheckmate()) {
+            captureAudio?.play();
+            toast.error("Checkmate!");
+          }
           if (chess.isStalemate()) {
             captureAudio?.play();
             toast.error("Stalemate");
@@ -79,6 +89,14 @@ export default function Game() {
           captureAudio?.play();
           break;
         }
+        case OPPONENT_DISCONNECTED: {
+          setStarted(false);
+          toast.error(message.payload);
+          break;
+        }
+        case INVALID_MOVE:
+          toast.error(message.payload.message);
+          break;
       }
     };
 
@@ -86,10 +104,10 @@ export default function Game() {
     return () => socket.removeEventListener("message", handler);
   }, [socket, chess, captureAudio, moveAudio]);
 
-  if (!socket) return <div>Connecting...</div>;
+  if (!socket) return <div>Websocket is connecting...</div>;
 
   return (
-    <div className="justify-center flex items-center min-h-screen w-screen">
+    <div className="justify-center flex items-center min-h-screen w-screen bg-stone-900">
       <div className="flex gap-8 items-center justify-center lg:flex-row flex-col">
         <div className="flex flex-col gap-2 py-16 md:py-0">
           <div>{opponent && <UserInfo email={opponent} />}</div>
@@ -108,7 +126,7 @@ export default function Game() {
         </div>
 
         {/* side panel */}
-        <div className="w-96 bg-stone-800 md:border-l border-stone-500 h-screen">
+        <div className="w-96 bg-stone-800 md:border-l border-stone-500 rounded-lg shadow-lg overflow-hidden">
           {!started ? (
             <div>
               <span className="w-8 h-8 border-t-4 border-t-white border-4 border-transparent rounded-full animate-spin border-white bg-transparent flex"></span>
