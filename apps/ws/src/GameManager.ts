@@ -1,5 +1,5 @@
 import { WebSocket } from "ws";
-import { INIT_GAME, MOVE } from "./messages";
+import { INIT_GAME, MOVE, OPPONENT_DISCONNECTED } from "./messages";
 import { Game } from "./Game";
 
 interface User {
@@ -24,13 +24,27 @@ export class GameManager {
   }
 
   removeUser(socket: WebSocket) {
-    // remove pendig user if this was pending
-    if (this.pendingUser?.socket === socket) {
-      this.pendingUser = null;
-      console.log("a pending user exited");
-    }
+    // remove pending user if this was pending
+    if (this.pendingUser?.socket === socket) this.pendingUser = null;
 
     this.users = this.users.filter((user) => user.socket !== socket);
+    this.games.filter((game) => {
+      if (game.player1.socket === socket || game.player2.socket === socket) {
+        // notify the other player that the game has ended
+        const otherPlayerSocket =
+          game.player1.socket === socket
+            ? game.player2.socket
+            : game.player1.socket;
+        otherPlayerSocket.send(
+          JSON.stringify({
+            type: OPPONENT_DISCONNECTED,
+            payload: { message: "Opponent Disconnected" },
+          })
+        );
+        return false; // remove this game
+      }
+      return true; // keep this game
+    });
   }
 
   private handleMessage(user: User) {

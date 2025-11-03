@@ -15,7 +15,7 @@ const INIT_GAME = "init_game";
 const MOVE = "move";
 const GAME_OVER = "game_over";
 const INVALID_MOVE = "invalid_move";
-const OPPONENT_DISCONNECTED = "oppoenent_disconnected";
+const OPPONENT_DISCONNECTED = "opponent_disconnected";
 
 export default function Game() {
   const socket = useSocket();
@@ -91,7 +91,7 @@ export default function Game() {
         }
         case OPPONENT_DISCONNECTED: {
           setStarted(false);
-          toast.error(message.payload);
+          toast.error(message.payload.message);
           break;
         }
         case INVALID_MOVE:
