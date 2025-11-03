@@ -3,7 +3,7 @@
   "private": true,
   "scripts": {
     "build": "turbo build",
-    "dev": "turbo dev --turbo",
+    "dev": "turbo dev",
     "lint": "turbo lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
@@ -18,11 +18,7 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "npm@10.8.2",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
+  "packageManager": "pnpm@9.0.0",
   "dependencies": {
     "react-confetti": "^6.1.0",
     "react-use": "^17.5.1",

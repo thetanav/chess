@@ -1,9 +1,7 @@
 import { db } from "@/db";
 
-export async function GET(
-  request: Request,
-  { params }: { params: { email: string } }
-) {
+export async function GET(request: Request, props: { params: Promise<{ email: string }> }) {
+  const params = await props.params;
   const user = await db.user.findUnique({
     where: {
       email: params.email,
