@@ -2,7 +2,6 @@
 
 ![image](https://github.com/tanavposwal/chess/assets/63358333/4fc1c109-0170-4f82-bf75-d1a382dd9e75)
 
-
 ## Manual
 
 - WS - PORT:8080
@@ -10,10 +9,10 @@
 
 ## TODO
 
-- [ ] Add login
-- [ ] Saving players states
-- [ ] Interactive dialogs for game states
-- [ ] Converting to docker compose
-- [ ] Deploying docker
+- [x] Add login
+- [x] Saving players states
+- [x] Interactive dialogs for game states
+- [x] Converting to docker compose
+- [x] Deploying docker
 - [ ] Redis for scalable game ws
-- [ ] Continued ...
+- [ ] Save game

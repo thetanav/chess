@@ -1,4 +1,3 @@
-import { Toaster } from "react-hot-toast";
 import { SessionProvider } from "next-auth/react";
 
 export default function RootLayout({
@@ -6,10 +5,5 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return (
-    <SessionProvider>
-      <Toaster position="top-right" reverseOrder={true} />
-      {children}
-    </SessionProvider>
-  );
+  return <SessionProvider>{children}</SessionProvider>;
 }

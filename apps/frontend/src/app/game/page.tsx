@@ -9,6 +9,7 @@ import { signIn, useSession } from "next-auth/react";
 import { UserInfo, UserImage } from "@/components/UserInfo";
 import Confetti from "react-confetti";
 import useWindowSize from "react-use/lib/useWindowSize";
+import Image from "next/image";
 
 const INIT_GAME = "init_game";
 const MOVE = "move";
@@ -29,88 +30,82 @@ export default function Game() {
   const [moves, setMoves] = useState<{ from: string; to: string }[]>([]);
   const [you, setYou] = useState("");
   const [opponent, setOpponent] = useState("");
-  const [moveAudio, setMoveAudio] = useState<HTMLAudioElement | null>(null);
-  const [captureAudio, setCaptureAudio] = useState<HTMLAudioElement | null>(
-    null
+  const [moveAudio] = useState<HTMLAudioElement>(
+    () => new Audio("/move-self.mp3")
+  );
+  const [captureAudio] = useState<HTMLAudioElement>(
+    () => new Audio("/capture.mp3")
   );
   const session = useSession();
   const { width, height } = useWindowSize();
 
   useEffect(() => {
-    setMoveAudio(new Audio("/move-self.mp3"));
-    setCaptureAudio(new Audio("/capture.mp3"));
+    if (!socket) return;
 
-    if (!socket) {
-      return;
-    }
-    socket.onmessage = (event) => {
+    const handler = (event: MessageEvent) => {
       const message = JSON.parse(event.data);
 
       switch (message.type) {
-        case INIT_GAME:
+        case INIT_GAME: {
           setColor(message.payload.color);
           setYou(message.payload.you);
           setOpponent(message.payload.opponent);
           setBoard(chess.board());
           setStarted(true);
-          if (message.payload.color == "white") {
-            setMyChance(true);
-          } else {
-            setMyChance(false);
-          }
+          setMyChance(message.payload.color === "white");
           toast.success("Match started.");
-
           break;
-
-        case MOVE:
+        }
+        case MOVE: {
           const move = message.payload;
           chess.move(move);
-          console.log(move);
-          setMoves((prev: any) => [...prev, move]);
-          console.log(moves);
+          setMoves((prev) => [...prev, move]);
           setBoard(chess.board());
-          setMyChance(!mychance);
+          setMyChance((prev) => !prev);
           if (chess.isCheck()) {
-            if (captureAudio) captureAudio.play();
-            toast.error("Your are checked");
+            captureAudio?.play();
+            toast.error("You are in check");
           }
           if (chess.isStalemate()) {
-            if (captureAudio) captureAudio.play();
-            toast.error("Condition of Draw");
+            captureAudio?.play();
+            toast.error("Stalemate");
           }
-          if (moveAudio) moveAudio.play();
+          moveAudio?.play();
           break;
-
-        case GAME_OVER:
+        }
+        case GAME_OVER: {
           setStarted(false);
           setWinner(message.payload);
-          if (captureAudio) captureAudio.play();
+          captureAudio?.play();
           break;
+        }
       }
     };
-  }, [socket]);
+
+    socket.addEventListener("message", handler);
+    return () => socket.removeEventListener("message", handler);
+  }, [socket, chess, captureAudio, moveAudio]);
 
   if (!socket) return <div>Connecting...</div>;
 
   return (
     <div className="justify-center flex items-center min-h-screen w-screen">
       <div className="flex gap-8 items-center justify-center lg:flex-row flex-col">
-        
-          <div className="flex flex-col gap-2 py-16 md:py-0">
-            <div>{opponent && <UserInfo email={opponent} />}</div>
-            <ChessBoard
-              chess={chess}
-              setBoard={setBoard}
-              socket={socket}
-              board={board}
-              setMyChance={setMyChance}
-              setMoves={setMoves}
-              started={started}
-              mychance={mychance}
-              isFlipped={color == "white" ? false : true}
-            />
-            <div>{you && <UserInfo email={you} />}</div>
-          </div>
+        <div className="flex flex-col gap-2 py-16 md:py-0">
+          <div>{opponent && <UserInfo email={opponent} />}</div>
+          <ChessBoard
+            chess={chess}
+            setBoard={setBoard}
+            socket={socket}
+            board={board}
+            setMyChance={setMyChance}
+            setMoves={setMoves}
+            started={started}
+            mychance={mychance}
+            isFlipped={color == "white" ? false : true}
+          />
+          <div>{you && <UserInfo email={you} />}</div>
+        </div>
 
         {/* side panel */}
         <div className="w-96 bg-stone-800 md:border-l border-stone-500 h-screen">
@@ -135,8 +130,7 @@ export default function Game() {
                 {moves.map((move) => (
                   <li
                     key={move.from + move.to}
-                    className="text-sm pb-1 text-stone-400 flex gap-10 border-b border-stone-600"
-                  >
+                    className="text-sm pb-1 text-stone-400 flex gap-10 border-b border-stone-600">
                     <span className="font-semibold">{move.from}</span>
                     <span className="font-semibold">{move.to}</span>
                   </li>
@@ -178,10 +172,15 @@ export default function Game() {
                     {session.data?.user ? (
                       <div className="flex flex-col gap-3 justify-end">
                         <div className="flex gap-3 items-center">
-                          <img
-                            src={session.data.user.image!}
-                            className="rounded-full w-8 h-8"
-                          />
+                          {session.data.user.image && (
+                            <Image
+                              src={session.data.user.image}
+                              alt="avatar"
+                              width={32}
+                              height={32}
+                              className="rounded-full w-8 h-8"
+                            />
+                          )}
                           <h3 className="text-sm">{session.data.user.name}</h3>
                         </div>
                         <button
@@ -203,16 +202,14 @@ export default function Game() {
                             );
                             // init game
                             setPending(true);
-                          }}
-                        >
+                          }}>
                           Play
                         </button>
                       </div>
                     ) : (
                       <button
                         onClick={() => signIn("google")}
-                        className="bg-blue-500 rounded-md px-4 py-1"
-                      >
+                        className="bg-blue-500 rounded-md px-4 py-1">
                         Sign in
                       </button>
                     )}
