@@ -16,3 +16,4 @@
 - [x] Deploying docker
 - [ ] Redis for scalable game ws
 - [ ] Save game
+- [ ] replace email to user.id in the ws

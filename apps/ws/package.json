@@ -16,6 +16,7 @@
     "@types/ws": "^8.5.10",
     "chess.js": "^1.0.0-beta.8",
     "typescript": "^5.4.5",
-    "ws": "^8.17.0"
+    "ws": "^8.17.0",
+    "@repo/db": "workspace:*"
   }
 }

@@ -24,6 +24,8 @@ export class GameManager {
   }
 
   removeUser(socket: WebSocket) {
+    // remove pendig user if this was pending
+    if (this.pendingUser?.socket === socket) this.pendingUser = null;
     this.users.filter((user) => user.socket !== socket);
   }
 

@@ -1,6 +1,7 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
 import { GAME_OVER, INIT_GAME, MOVE } from "./messages";
+import { db } from "./db";
 
 interface User {
   email: string;
@@ -13,12 +14,18 @@ export class Game {
   public board: Chess;
   private startTime: Date;
   private moveCount = 0;
+  private gameID: string;
 
   constructor(player1: User, player2: User) {
     this.player1 = player1;
     this.player2 = player2;
     this.board = new Chess();
     this.startTime = new Date();
+    this.gameID = "";
+
+    // make a game in db
+    this.createToDb();
+
     this.player1.socket.send(
       JSON.stringify({
         type: INIT_GAME,
@@ -41,13 +48,39 @@ export class Game {
     );
   }
 
-  makeMove(
+  async createToDb() {
+    const player1ID = await db.user.findUnique({
+      where: {
+        email: this.player1.email,
+      },
+      select: { id: true },
+    });
+    const player2ID = await db.user.findUnique({
+      where: {
+        email: this.player2.email,
+      },
+      select: { id: true },
+    });
+    // if either user is missing, don't attempt to create the game
+    if (!player1ID || !player2ID) return;
+    const game = await db.game.create({
+      data: {
+        status: "IN_PROGRESS",
+        whitePlayer: { connect: { id: player1ID.id } },
+        blackPlayer: { connect: { id: player2ID.id } },
+      },
+    });
+    this.gameID = game.id;
+  }
+
+  async makeMove(
     socket: WebSocket,
     move: {
       from: string;
       to: string;
     }
   ) {
+    // TODO: the user must know he is trying wrong move
     // first chance is of white or player 1
 
     // validate the type of move using zod
@@ -63,6 +96,7 @@ export class Game {
     try {
       this.board.move(move);
     } catch (e) {
+      console.log(e);
       return;
     }
 
@@ -88,17 +122,30 @@ export class Game {
       let winner: User;
 
       if (this.moveCount % 2 === 0) {
-        winner = this.player2
+        winner = this.player2;
       } else {
-        winner = this.player1
+        winner = this.player1;
       }
-      
+
+      // add it to db
+      await db.game.update({
+        where: {
+          id: this.gameID,
+        },
+        data: {
+          status: "COMPLETED",
+          result: this.moveCount % 2 ? "WHITE_WINS" : "BLACK_WINS",
+          endAt: new Date(),
+          currentFen: this.board.fen(),
+        },
+      });
+
       this.player1.socket.send(
         JSON.stringify({
           type: GAME_OVER,
           payload: {
             winner: this.board.turn() === "w" ? "black" : "white",
-            user: winner.email
+            user: winner.email,
           },
         })
       );
@@ -107,7 +154,7 @@ export class Game {
           type: GAME_OVER,
           payload: {
             winner: this.board.turn() === "w" ? "black" : "white",
-            user: winner.email
+            user: winner.email,
           },
         })
       );
