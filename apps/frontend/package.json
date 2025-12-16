@@ -20,7 +20,8 @@
     "react": "19.2.0",
     "react-chess-pieces": "^1.1.2",
     "react-dom": "19.2.0",
-    "react-hot-toast": "^2.4.1"
+    "react-hot-toast": "^2.4.1",
+    "framer-motion": "^10.16.4"
   },
   "devDependencies": {
     "@types/node": "^20",
