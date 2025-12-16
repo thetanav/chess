@@ -21,6 +21,7 @@
   },
   "packageManager": "pnpm@9.0.0",
   "dependencies": {
+    "framer-motion": "^12.23.26",
     "react-confetti": "^6.1.0",
     "react-use": "^17.5.1",
     "use-sound": "^4.0.3"
