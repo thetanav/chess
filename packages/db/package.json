@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "postinstall": "npx prisma generate",
+    "postinstall": "DATABASE_URL=\"postgresql://dummy:dummy@localhost:5432/dummy\" npx prisma generate",
     "db:generate": "npx prisma generate",
     "db:push": "npx prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1",
