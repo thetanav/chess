@@ -4,11 +4,11 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "db:generate": "prisma generate",
-    "db:push": "prisma db push --skip-generate",
+    "postinstall": "npx prisma generate",
+    "db:generate": "npx prisma generate",
+    "db:push": "npx prisma db push",
     "test": "echo \"Error: no test specified\" && exit 1",
     "db:dev": "npx prisma migrate dev && npx prisma generate",
-    "db:seed": "prisma db seed",
     "typecheck": "tsc --noEmit"
   },
   "prisma": {
@@ -21,10 +21,12 @@
     "./client": "./src/index.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.16.1"
+    "@prisma/adapter-pg": "^7.2.0",
+    "@prisma/client": "^7.2.0",
+    "dotenv": "^17.2.3"
   },
   "devDependencies": {
-    "prisma": "^5.16.1",
-    "@types/node": "^20"
+    "@types/node": "^20",
+    "prisma": "^7.2.0"
   }
 }
