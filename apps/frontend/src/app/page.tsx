@@ -22,110 +22,155 @@ export default async function Home() {
     },
   });
   return (
-    <div className="max-w-screen-xl mx-auto px-6 py-8">
-      {/* Top bar */}
-      <div className="w-full flex items-center justify-between">
+    <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 py-12">
+      <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] rounded-b-[6rem] bg-gradient-to-b from-amber-500/20 via-amber-500/10 to-transparent blur-3xl" />
+
+      <header className="card card-hover flex items-center justify-between px-6 py-4">
         <Link href="/" className="flex items-center gap-3">
-          <span className="inline-flex h-10 w-10 items-center justify-center rounded-lg bg-stone-700">
-            <Image src="/chess.png" alt="Chess" width={24} height={24} />
+          <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br from-white/10 to-white/0 shadow-[0_18px_40px_-28px_rgba(0,0,0,0.8)]">
+            <Image src="/chess.png" alt="Chess" width={28} height={28} />
           </span>
           <span className="text-lg font-extrabold tracking-tight">Chess</span>
         </Link>
 
-        <div className="flex items-center gap-3">
-          <Suspense>
-            {session?.user ? (
-              <div className="flex items-center gap-3">
-                {session.user.image && (
-                  <Image
-                    src={session.user.image}
-                    alt={session.user.name ?? "avatar"}
-                    width={40}
-                    height={40}
-                    className="rounded-md"
-                  />
-                )}
-                <span className="text-sm font-medium text-stone-300">
-                  {session.user.name}
-                </span>
-                <form
-                  action={async () => {
-                    "use server";
-                    await signOut();
-                  }}>
-                  <button
-                    type="submit"
-                    className="rounded-md border border-white/10 bg-white/5 px-3 py-1 text-xs font-semibold text-white transition-colors hover:bg-white/10">
-                    Sign out
-                  </button>
-                </form>
-              </div>
-            ) : (
+        <Suspense>
+          {session?.user ? (
+            <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-2 py-1.5">
+              {session.user.image && (
+                <Image
+                  src={session.user.image}
+                  alt={session.user.name ?? "avatar"}
+                  width={36}
+                  height={36}
+                  className="h-9 w-9 rounded-full object-cover"
+                />
+              )}
+              <span className="text-sm font-medium text-stone-200">
+                {session.user.name}
+              </span>
               <form
                 action={async () => {
                   "use server";
-                  await signIn("google");
+                  await signOut();
                 }}>
                 <button
                   type="submit"
-                  className="rounded-md border border-amber-500/30 bg-amber-500/10 px-3 py-1 text-xs font-semibold text-amber-300 transition-colors hover:bg-amber-500/20">
-                  Sign in
+                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-stone-50 transition-colors hover:bg-white/20">
+                  Sign out
                 </button>
               </form>
-            )}
-          </Suspense>
-        </div>
-      </div>
+            </div>
+          ) : (
+            <form
+              action={async () => {
+                "use server";
+                await signIn("google");
+              }}>
+              <button
+                type="submit"
+                className="rounded-full border border-amber-400/30 bg-amber-400/20 px-4 py-2 text-sm font-semibold text-amber-200 transition-colors hover:bg-amber-400/30">
+                Sign in
+              </button>
+            </form>
+          )}
+        </Suspense>
+      </header>
 
-      {/* Hero */}
-      <section className="mt-10">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-5">
-          <div className="w-20 h-20 bg-stone-700 flex items-center rounded-xl justify-center shadow-lg shadow-black/20">
-            <Image src="/chess.png" alt="logo" width={32} height={15} />
+      <main className="grid gap-12 lg:grid-cols-[1.2fr_1fr]">
+        <section className="flex flex-col gap-10">
+          <div className="card card-hover flex flex-col gap-6 px-8 py-10">
+            <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-black sm:text-4xl">
+                    Find your next opponent.
+                  </h1>
+                  <p className="text-sm leading-relaxed text-stone-300 sm:text-base">
+                    Queue up for a live match or invite a friend. Every move is
+                    synced instantly through our realtime servers.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                { label: "Live Matches", value: matches.length.toString() },
+                {
+                  label: "Openings Tracked",
+                  value: "Real-time",
+                },
+              ].map((stat) => (
+                <div
+                  key={stat.label}
+                  className="rounded-2xl border border-white/5 bg-white/5 px-5 py-4">
+                  <p className="text-xs uppercase tracking-[0.18em] text-stone-400">
+                    {stat.label}
+                  </p>
+                  <p className="mt-2 text-xl font-semibold text-stone-50">
+                    {stat.value}
+                  </p>
+                </div>
+              ))}
+            </div>
           </div>
-          <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold">Play</h1>
-            <p className="text-sm text-stone-400">Start a game</p>
+
+          <section className="space-y-4">
+            <div className="flex items-center justify-between">
+              <h2 className="text-lg font-semibold text-stone-100">
+                Play styles
+              </h2>
+              <span className="text-xs uppercase tracking-[0.32em] text-stone-500">
+                Choose mode
+              </span>
+            </div>
+            <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+              {[
+                { href: "/game", label: "Match me instantly" },
+                { href: "/game", label: "Invite a friend" },
+                { href: "/game", label: "Practice with the bot" },
+              ].map((m) => (
+                <Link
+                  key={m.label}
+                  className="card card-hover group relative overflow-hidden px-5 py-6"
+                  href={m.href}>
+                  <Image
+                    src="/chessboard.png"
+                    alt="board"
+                    width={500}
+                    height={500}
+                    className="pointer-events-none absolute inset-0 h-full w-full scale-105 select-none opacity-0 transition-opacity duration-300 group-hover:opacity-40"
+                  />
+                  <div className="relative flex h-full flex-col justify-between gap-10">
+                    <p className="text-sm font-semibold text-stone-100">
+                      {m.label}
+                    </p>
+                    <span className="text-xs uppercase tracking-[0.28em] text-stone-400">
+                      Queue →
+                    </span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+          </section>
+        </section>
+
+        <section className="card card-hover h-fit px-7 py-7">
+          <div className="flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-stone-100">
+              Game history
+            </h2>
+            <span className="text-xs text-stone-500">
+              {matches.length} {matches.length === 1 ? "match" : "matches"}
+            </span>
           </div>
-        </div>
 
-        {/* Modes */}
-        <div className="mt-5 flex gap-4 overflow-x-auto pb-1">
-          {[
-            { href: "/game", label: "With Random Player" },
-            { href: "/game", label: "With a Friend" },
-            { href: "/game", label: "With Bot" },
-          ].map((m) => (
-            <Link
-              key={m.label}
-              className="group relative min-w-48 overflow-hidden rounded-xl border border-white/5 bg-white/5 shadow-lg shadow-black/20 transition-all duration-200 hover:-translate-y-0.5 hover:shadow-xl"
-              href={m.href}>
-              <Image
-                src="/chessboard.png"
-                alt="board"
-                width={500}
-                height={500}
-                className="pointer-events-none select-none opacity-90"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-black/0" />
-              <p className="absolute bottom-2 left-0 right-0 mx-3 rounded-md bg-black/40 px-3 py-1 text-center text-sm font-semibold">
-                {m.label}
-              </p>
-            </Link>
-          ))}
-        </div>
-      </section>
-
-      {/* history games  */}
-      <section className="mt-10 rounded-xl border border-white/5 bg-white/5">
-        <div className="px-6 py-4">
-          <h4 className="text-xl font-bold">Game History</h4>
-          {matches.length == 0 ? (
-            <p className="mt-2 text-sm text-stone-400">
+          {matches.length === 0 ? (
+            <p className="mt-6 text-sm text-stone-400">
               No past games yet. Play your first match!
             </p>
           ) : (
-            <ul className="mt-4 space-y-3">
+            <ul className="mt-6 space-y-4">
               {matches.map((game) => {
                 const isWhite = game.whitePlayerId === session?.user?.id;
                 const opponent = isWhite ? game.blackPlayer : game.whitePlayer;
@@ -139,36 +184,37 @@ export default async function Home() {
                 return (
                   <li
                     key={game.id}
-                    className="flex items-center justify-between rounded-lg border border-white/10 bg-white/5 p-3">
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 px-5 py-4">
                     <div className="flex items-center gap-3">
                       {opponent.image && (
                         <Image
                           src={opponent.image}
                           alt={opponent.name ?? "Opponent"}
-                          width={32}
-                          height={32}
-                          className="rounded-full"
+                          width={40}
+                          height={40}
+                          className="h-10 w-10 rounded-full object-cover"
                         />
                       )}
                       <div>
-                        <p className="text-sm font-medium">
-                          vs {opponent.name}
+                        <p className="text-sm font-medium text-stone-100">
+                          vs {opponent.name ?? "Unknown"}
                         </p>
-                        <p className="text-xs text-stone-400">
+                        <p className="text-xs text-stone-500">
                           {game.endAt
                             ? new Date(game.endAt).toLocaleDateString()
-                            : "Unknown"}{" "}
-                          • {game.status.replace("_", " ").toLowerCase()}
+                            : "Unknown"}
+                          {" • "}
+                          {game.status.replace("_", " ").toLowerCase()}
                         </p>
                       </div>
                     </div>
                     <span
-                      className={`text-sm font-semibold ${
+                      className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
                         outcome === "Won"
-                          ? "text-green-400"
+                          ? "bg-emerald-400/20 text-emerald-300"
                           : outcome === "Lost"
-                            ? "text-red-400"
-                            : "text-yellow-400"
+                            ? "bg-rose-400/20 text-rose-300"
+                            : "bg-amber-400/20 text-amber-300"
                       }`}>
                       {outcome}
                     </span>
@@ -177,8 +223,8 @@ export default async function Home() {
               })}
             </ul>
           )}
-        </div>
-      </section>
+        </section>
+      </main>
     </div>
   );
 }

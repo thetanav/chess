@@ -17,17 +17,19 @@ export function UserInfo({ id }: { id: string }) {
   }, [id]);
 
   return (
-    <div className="flex md:gap-3 gap-2 items-center select-none">
+    <div className="inline-flex items-center justify-center gap-3 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-center text-sm font-medium text-stone-100 shadow-[0_10px_30px_-20px_rgba(0,0,0,1)] backdrop-blur-md">
       {image && (
         <Image
           src={image}
           alt="avatar"
           width={40}
           height={40}
-          className="md:w-10 w-8 md:h-10 h-8 rounded-md ring-2 ring-white/10 shadow-lg transition-all duration-200 ease-out hover:shadow-xl hover:ring-white/20"
+          className="h-9 w-9 rounded-full object-cover ring-1 ring-white/10"
         />
       )}
-      <h3 className="md:text-md text-md font-semibold">{name} (400)</h3>
+      <span className="truncate max-w-[10rem]">
+        {name || "Waiting for player"}
+      </span>
     </div>
   );
 }
@@ -44,23 +46,23 @@ export function UserImage({ id, color }: { id: string; color: string }) {
   }, [id]);
 
   return (
-    <div className="relative w-fit h-fit select-none">
+    <div className="relative h-fit w-fit select-none">
       {image && (
         <Image
           src={image}
           alt="avatar"
           width={80}
           height={80}
-          className="rounded-lg w-20 h-20 ring-2 ring-white/10 shadow-lg transition-all duration-200 ease-out hover:shadow-xl hover:ring-white/20"
+          className="h-20 w-20 rounded-2xl object-cover ring-1 ring-white/10 shadow-[0_24px_60px_-28px_rgba(0,0,0,1)]"
         />
       )}
-      <div className="absolute -bottom-2 -right-2 z-10 bg-white/10 rounded-full p-1 shadow-md">
+      <div className="absolute -bottom-2 -right-2 z-10 rounded-full border border-white/10 bg-white/10 p-1.5 shadow-lg backdrop-blur">
         <Image
           alt="piece"
           width={100}
           height={100}
           src={`/pieces/${color[0]}k.png`}
-          className="w-8 h-8"
+          className="h-7 w-7"
         />
       </div>
     </div>

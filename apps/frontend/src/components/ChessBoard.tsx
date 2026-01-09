@@ -1,9 +1,6 @@
 import { Chess, Color, PieceSymbol, Square } from "chess.js";
 import Image from "next/image";
-import { useEffect, useState } from "react";
-// @ts-ignore
-import Piece from "react-chess-pieces";
-import toast from "react-hot-toast";
+import { useState } from "react";
 
 const MOVE = "move";
 
@@ -80,88 +77,106 @@ export const ChessBoard = ({
 
   // show messages like check, attacked
 
+  const orientedRows = isFlipped ? [...board].reverse() : board;
+
   return (
-    <div className="rounded-md overflow-hidden bg-black">
-      {(isFlipped ? board.slice().reverse() : board).map((row, i) => {
-        i = isFlipped ? i + 1 : 8 - i;
-        return (
-          <div key={i} className="flex">
-            {(isFlipped ? row.slice().reverse() : row).map((square, j) => {
-              j = isFlipped ? 7 - (j % 8) : j % 8;
+    <div className="rounded-[2rem] border border-white/10 bg-stone-950/60 p-3 shadow-[0_28px_60px_-40px_rgba(0,0,0,0.9)] backdrop-blur">
+      <div className="overflow-hidden rounded-[1.5rem] ring-1 ring-white/5">
+        {orientedRows.map((row, rowIndex) => {
+          const rank = isFlipped ? rowIndex + 1 : 8 - rowIndex;
+          const orientedCols = isFlipped ? [...row].reverse() : row;
 
-              const squareRepresentation = (String.fromCharCode(97 + j) +
-                "" +
-                i) as Square;
+          return (
+            <div key={rank} className="flex">
+              {orientedCols.map((square, colIndex) => {
+                const file = isFlipped ? 7 - (colIndex % 8) : colIndex % 8;
+                const squareRepresentation = (String.fromCharCode(97 + file) +
+                  "" +
+                  rank) as Square;
+                const isOrigin = from === squareRepresentation;
+                const isTarget =
+                  hoveredSquare === squareRepresentation && draggedSquare;
 
-              return (
-                <div
-                  onClick={() => {
-                    if (from) {
-                      handleMove(from, squareRepresentation);
-                    }
-                  }}
-                  onDragOver={(e) => {
-                    e.preventDefault();
-                    if (draggedSquare) {
-                      setHoveredSquare(squareRepresentation);
-                    }
-                  }}
-                  onDragLeave={() => {
-                    setHoveredSquare(null);
-                  }}
-                  onDrop={(e) => {
-                    e.preventDefault();
-                    setHoveredSquare(null);
-                    if (draggedSquare && mychance) {
-                      handleMove(draggedSquare, squareRepresentation);
-                      setDraggedSquare(null);
-                    }
-                  }}
-                  key={j}
-                  className={`w-[4rem] sm:w-16 md:w-[4.5rem] h-[4rem] sm:h-16 md:h-[4.5rem] select-none relative hover:brightness-[0.9] transition-all ${
-                    (i + j) % 2 === 0 ? "bg-chess-light" : "bg-chess-dark"
-                  } ${hoveredSquare === squareRepresentation && draggedSquare ? "brightness-[0.8]" : ""}`}>
-                  {started && (
-                    <div className="w-full justify-center items-center flex h-full">
-                      <div className="h-full justify-center items-center flex flex-col">
-                        {square && (
-                          <Image
-                            alt="piece"
-                            loading="eager"
-                            className="md:w-20 sm:w-16 w-[3.5rem] cursor-normal active:cursor-grabbing origin-center"
-                            width={1000}
-                            height={1000}
-                            src={`/pieces/${square.color + square.type}.png`}
-                            quality={100}
-                            draggable={mychance}
-                            onDragStart={(e) => {
-                              if (mychance) {
-                                setDraggedSquare(squareRepresentation);
-                                setFrom(squareRepresentation);
-                                e.dataTransfer.effectAllowed = "move";
-                              } else {
-                                e.preventDefault();
-                              }
-                            }}
-                            onDragEnd={() => {
-                              setDraggedSquare(null);
-                            }}
-                            onClick={() => {
-                              if (mychance) {
-                                setFrom(squareRepresentation);
-                              }
-                            }}
-                          />
-                        )}
+                return (
+                  <div
+                    key={squareRepresentation}
+                    onClick={() => {
+                      if (from) {
+                        handleMove(from, squareRepresentation);
+                      }
+                    }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      if (draggedSquare) {
+                        setHoveredSquare(squareRepresentation);
+                      }
+                    }}
+                    onDragLeave={() => {
+                      setHoveredSquare(null);
+                    }}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setHoveredSquare(null);
+                      if (draggedSquare && mychance) {
+                        handleMove(draggedSquare, squareRepresentation);
+                        setDraggedSquare(null);
+                      }
+                    }}
+                    className={`relative flex h-[3.75rem] w-[3.75rem] select-none transition-[transform,filter] duration-200 ease-out sm:h-16 sm:w-16 md:h-[4.5rem] md:w-[4.5rem] ${
+                      (rank + file) % 2 === 0
+                        ? "bg-chess-light"
+                        : "bg-chess-dark"
+                    } ${
+                      isTarget
+                        ? "ring-2 ring-emerald-400/40 ring-offset-2 ring-offset-stone-950"
+                        : ""
+                    } ${
+                      isOrigin
+                        ? "ring-2 ring-amber-400/60 ring-offset-2 ring-offset-stone-950"
+                        : ""
+                    }`}>
+                    {started && (
+                      <div className="flex h-full w-full items-center justify-center">
+                        <div className="flex h-full flex-col items-center justify-center">
+                          {square && (
+                            <Image
+                              alt="piece"
+                              loading="eager"
+                              className="w-12 cursor-pointer select-none active:cursor-grabbing sm:w-14 md:w-16"
+                              width={1000}
+                              height={1000}
+                              src={`/pieces/${square.color + square.type}.png`}
+                              quality={100}
+                              draggable={mychance}
+                              onDragStart={(e) => {
+                                if (mychance) {
+                                  setDraggedSquare(squareRepresentation);
+                                  setFrom(squareRepresentation);
+                                  e.dataTransfer.effectAllowed = "move";
+                                } else {
+                                  e.preventDefault();
+                                }
+                              }}
+                              onDragEnd={() => {
+                                setDraggedSquare(null);
+                              }}
+                              onClick={() => {
+                                if (mychance) {
+                                  setFrom(squareRepresentation);
+                                }
+                              }}
+                            />
+                          )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        );
-      })}
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 };
