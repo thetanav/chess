@@ -1,6 +1,11 @@
-import "dotenv/config";
+import path from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
-import { PrismaClient } from "../generated/prisma/client";
+import prismaClient from "@prisma/client";
+import { config as loadEnv } from "dotenv";
+
+const { PrismaClient } = prismaClient;
+
+loadEnv({ path: path.resolve(__dirname, "../../.env") });
 
 const connectionString = process.env.DATABASE_URL;
 
@@ -15,7 +20,7 @@ db.$connect()
   .then(() => {
     console.log("Connected to the database");
   })
-  .catch((error) => {
+  .catch((error: unknown) => {
     console.error("Error connecting to the database:", error);
     process.exit(1);
   });

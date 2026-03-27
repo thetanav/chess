@@ -1,16 +1,13 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../packages/typescript-config/node.json",
   "compilerOptions": {
-    "target": "es2016",
-    "module": "nodenext",
-    "rootDir": "../..",
+    "composite": true,
+    "incremental": true,
     "outDir": "./dist",
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "allowJs": true,
-    "skipLibCheck": true
+    "rootDir": "./src",
+    "tsBuildInfoFile": "./dist/.tsbuildinfo"
   },
+  "references": [{ "path": "../../packages/db" }],
   "include": ["src/**/*"],
   "exclude": ["node_modules", "dist"]
 }

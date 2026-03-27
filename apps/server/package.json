@@ -2,15 +2,13 @@
   "name": "server",
   "version": "1.0.0",
   "description": "",
-  "keywords": [],
-  "license": "ISC",
-  "author": "",
-  "main": "index.js",
+  "main": "dist/index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "tsc -b",
-    "start": "node dist/index.js",
-    "dev": "tsc -w",
+    "start": "node --env-file=.env dist/index.js",
+    "dev": "pnpm run build && pnpm run start",
+    "lint": "oxlint",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
@@ -18,11 +16,12 @@
     "better-auth": "^1.5.6",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "typescript": "^6.0.2"
+    "typescript": "^5.4.5"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
-    "@types/express": "^5.0.6"
-  },
-  "packageManager": "pnpm@10.27.0"
+    "@types/express": "^5.0.6",
+    "@types/node": "^20.19.37",
+    "@repo/typescript-config": "workspace:*"
+  }
 }

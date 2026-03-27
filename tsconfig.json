@@ -1,9 +1,8 @@
 {
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@repo/db": ["packages/db/src/index.ts"],
-      "@repo/db/*": ["packages/db/src/*"]
-    }
-  }
+  "files": [],
+  "references": [
+    { "path": "./packages/db" },
+    { "path": "./apps/server" },
+    { "path": "./apps/ws" }
+  ]
 }
