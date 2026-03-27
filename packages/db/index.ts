@@ -1,17 +1,8 @@
-import path from "node:path";
+import "dotenv/config";
 import { PrismaPg } from "@prisma/adapter-pg";
-import prismaClient from "@prisma/client";
-import { config as loadEnv } from "dotenv";
+import { PrismaClient } from "./generated/prisma/client";
 
-const { PrismaClient } = prismaClient;
-
-loadEnv({ path: path.resolve(__dirname, "../../.env") });
-
-const connectionString = process.env.DATABASE_URL;
-
-if (!connectionString) {
-  throw new Error("DATABASE_URL is not set");
-}
+const connectionString = `${process.env.DATABASE_URL}`;
 
 const adapter = new PrismaPg({ connectionString });
 const db = new PrismaClient({ adapter });

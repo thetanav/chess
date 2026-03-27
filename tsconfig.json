@@ -1,8 +1,0 @@
-{
-  "files": [],
-  "references": [
-    { "path": "./packages/db" },
-    { "path": "./apps/server" },
-    { "path": "./apps/ws" }
-  ]
-}

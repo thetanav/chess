@@ -1,103 +1,159 @@
-# Chess — Realtime Multiplayer Chess (monorepo)
+# Turborepo starter
 
-![screenshot](https://github.com/tanavposwal/chess/assets/63358333/4fc1c109-0170-4f82-bf75-d1a382dd9e75)
+This Turborepo starter is maintained by the Turborepo core team.
 
-A small realtime multiplayer chess project implemented as a turbo repo.
-It includes a Next.js frontend, a standalone WebSocket server for game logic, and a small Prisma-backed database package.
+## Using this example
 
-This README explains the repo layout, how to run the project locally, environment variables you may need, and useful developer notes.
+Run the following command:
 
-## Key features
-
-- Realtime gameplay using WebSockets
-- Next.js frontend (React + TypeScript)
-- Game state & persistence via Prisma (database package)
-- Monorepo structure for local development
-
-## Architecture
-
-- apps/frontend — Next.js app (UI, auth, client socket)
-- apps/ws — WebSocket server (game manager, move routing)
-- packages/db — Prisma client, DB schema & migration scripts
-- packages/ui, eslint-config, typescript-config — shared tooling and components
-
-Ports (defaults used by the project):
-
-- WebSocket server: 8080
-- Frontend: 3000
-
-## Prerequisites
-
-- Node.js (>= 18 recommended)
-- pnpm (workspace-aware package manager)
-- A Postgres-compatible database for Prisma (or set DATABASE_URL to any supported provider)
-
-## Quickstart — run locally
-
-1. Clone the repo and install dependencies (run from repo root):
-
-```bash
-pnpm install
+```sh
+npx create-turbo@latest
 ```
 
-2. Prepare your database and run Prisma migrations (example using `packages/db`):
+## What's inside?
 
-```bash
-# Set DATABASE_URL in your shell or .env (example using local Postgres)
-export DATABASE_URL="postgresql://user:password@localhost:5432/chess_dev"
+This Turborepo includes the following packages/apps:
 
-cd packages/db
-pnpm prisma migrate deploy
-# or use `pnpm prisma migrate dev` when you want to create/migrate locally
+### Apps and Packages
+
+- `docs`: a [Next.js](https://nextjs.org/) app
+- `web`: another [Next.js](https://nextjs.org/) app
+- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
+- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
+- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+
+Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+
+### Utilities
+
+This Turborepo has some additional tools already setup for you:
+
+- [TypeScript](https://www.typescriptlang.org/) for static type checking
+- [ESLint](https://eslint.org/) for code linting
+- [Prettier](https://prettier.io) for code formatting
+
+### Build
+
+To build all apps and packages, run the following command:
+
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+
+```sh
+cd my-turborepo
+turbo build
 ```
 
-3. Start the WebSocket server and frontend in separate terminals:
+Without global `turbo`, use your package manager:
 
-```bash
-# WebSocket server
-cd apps/ws
-pnpm dev
-
-# Frontend
-cd ../../apps/frontend
-pnpm dev
+```sh
+cd my-turborepo
+npx turbo build
+yarn dlx turbo build
+pnpm exec turbo build
 ```
 
-Open the frontend at http://localhost:3000. The frontend connects to the WS server on port 8080 by default.
+You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
 
-If your environment uses different ports or hosts, set the appropriate environment variables in each app (see Environment section below).
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
 
-## Environment variables
-
-Common variables used by the apps (not exhaustive):
-
-- DATABASE_URL — Prisma connection string for the database
-- NEXTAUTH_URL — URL of the Next.js app (for auth flows)
-- NEXTAUTH_SECRET — secret used by NextAuth (if enabled)
-- WS_URL — WebSocket server URL (if the frontend needs to connect to a custom host)
-
-Create `.env` files in apps that require them (frontend, ws, packages/db) or export variables in your shell.
-
-## Development notes
-
-- The project uses pnpm workspaces — prefer `pnpm` for installs and scripts.
-- The `packages/db/prisma/migrations` folder contains migration SQL generated during development. Use Prisma CLI to apply or create new migrations.
-- Consider running Redis for scaling the WS layer (TODO — planned in repo).
-
-## Repo structure (top-level)
-
-```
-apps/
-	frontend/   # Next.js app (UI)
-	ws/         # WebSocket server (game logic)
-packages/
-	db/         # Prisma client + schema + migrations
-	ui/         # shared UI components
-eslint-config/
-typescript-config/
-README.md
+```sh
+turbo build --filter=docs
 ```
 
-## TODO / Roadmap
+Without global `turbo`:
 
-- Redis for scalable game WebSocket infrastructure
+```sh
+npx turbo build --filter=docs
+yarn exec turbo build --filter=docs
+pnpm exec turbo build --filter=docs
+```
+
+### Develop
+
+To develop all apps and packages, run the following command:
+
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+
+```sh
+cd my-turborepo
+turbo dev
+```
+
+Without global `turbo`, use your package manager:
+
+```sh
+cd my-turborepo
+npx turbo dev
+yarn exec turbo dev
+pnpm exec turbo dev
+```
+
+You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+
+```sh
+turbo dev --filter=web
+```
+
+Without global `turbo`:
+
+```sh
+npx turbo dev --filter=web
+yarn exec turbo dev --filter=web
+pnpm exec turbo dev --filter=web
+```
+
+### Remote Caching
+
+> [!TIP]
+> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+
+Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+
+By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended):
+
+```sh
+cd my-turborepo
+turbo login
+```
+
+Without global `turbo`, use your package manager:
+
+```sh
+cd my-turborepo
+npx turbo login
+yarn exec turbo login
+pnpm exec turbo login
+```
+
+This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+
+Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+
+With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed:
+
+```sh
+turbo link
+```
+
+Without global `turbo`:
+
+```sh
+npx turbo link
+yarn exec turbo link
+pnpm exec turbo link
+```
+
+## Useful Links
+
+Learn more about the power of Turborepo:
+
+- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
+- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
+- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
+- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
+- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
+- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
