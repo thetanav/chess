@@ -241,12 +241,12 @@ export default function Game() {
                             payload: {
                               id: session.data?.user?.id,
                             },
-                          })
+                          }),
                         );
                         socket.send(
                           JSON.stringify({
                             type: INIT_GAME,
-                          })
+                          }),
                         );
                         setPending(true);
                       }}>

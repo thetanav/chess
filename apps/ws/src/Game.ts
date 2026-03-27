@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
 import { GAME_OVER, INIT_GAME, MOVE, INVALID_MOVE } from "./messages";
-import prisma from "@repo/db/client";
+import db from "@repo/db";
 
 interface User {
   id: string;
@@ -29,7 +29,7 @@ export class Game {
           you: player1.id,
           opponent: player2.id,
         },
-      })
+      }),
     );
     this.player2.socket.send(
       JSON.stringify({
@@ -39,7 +39,7 @@ export class Game {
           you: player2.id,
           opponent: player1.id,
         },
-      })
+      }),
     );
   }
 
@@ -48,7 +48,7 @@ export class Game {
     move: {
       from: string;
       to: string;
-    }
+    },
   ) {
     // validate the type of move using zod
     if (this.moveCount % 2 === 0 && socket !== this.player1.socket) {
@@ -70,7 +70,7 @@ export class Game {
           payload: {
             message: "Invalid move",
           },
-        })
+        }),
       );
       return;
     }
@@ -80,14 +80,14 @@ export class Game {
         JSON.stringify({
           type: MOVE,
           payload: move,
-        })
+        }),
       );
     } else {
       this.player1.socket.send(
         JSON.stringify({
           type: MOVE,
           payload: move,
-        })
+        }),
       );
     }
     this.moveCount++;
@@ -108,7 +108,7 @@ export class Game {
       }
 
       // save it to db
-      await prisma.game.create({
+      await db.game.create({
         data: {
           whitePlayer: { connect: { id: this.player1.id } },
           blackPlayer: { connect: { id: this.player2.id } },
@@ -137,7 +137,7 @@ export class Game {
                   : "white",
             user: winner === "DRAW" ? null : winner.id,
           },
-        })
+        }),
       );
       this.player2.socket.send(
         JSON.stringify({
@@ -151,7 +151,7 @@ export class Game {
                   : "white",
             user: winner === "DRAW" ? null : winner.id,
           },
-        })
+        }),
       );
       return;
     }

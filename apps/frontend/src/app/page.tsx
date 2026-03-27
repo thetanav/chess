@@ -1,26 +1,15 @@
 import { auth, signIn, signOut } from "@/auth";
-import db from "@repo/db";
+import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense } from "react";
+import { Suspense, use } from "react";
 
 export default async function Home() {
   const session = await auth();
-  const matches = await db.game.findMany({
-    where: {
-      OR: [
-        { whitePlayerId: session?.user?.id },
-        { blackPlayerId: session?.user?.id },
-      ],
-    },
-    include: {
-      whitePlayer: true,
-      blackPlayer: true,
-    },
-    orderBy: {
-      endAt: "desc",
-    },
+  const { data } = await axios.post("https://localhost:3001/games", {
+    userId: session?.user?.id,
   });
+
   return (
     <div className="relative mx-auto flex min-h-screen w-full max-w-6xl flex-col gap-12 px-6 py-12">
       <div className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] rounded-b-[6rem] bg-gradient-to-b from-amber-500/20 via-amber-500/10 to-transparent blur-3xl" />
@@ -95,7 +84,10 @@ export default async function Home() {
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
-                { label: "Live Matches", value: matches.length.toString() },
+                {
+                  label: "Live Matches",
+                  value: data.matches.length.toString(),
+                },
                 {
                   label: "Openings Tracked",
                   value: "Real-time",
@@ -161,17 +153,18 @@ export default async function Home() {
               Game history
             </h2>
             <span className="text-xs text-stone-500">
-              {matches.length} {matches.length === 1 ? "match" : "matches"}
+              {data.matches.length}{" "}
+              {data.matches.length === 1 ? "match" : "matches"}
             </span>
           </div>
 
-          {matches.length === 0 ? (
+          {data.matches.length === 0 ? (
             <p className="mt-6 text-sm text-stone-400">
               No past games yet. Play your first match!
             </p>
           ) : (
             <ul className="mt-6 space-y-4">
-              {matches.map((game) => {
+              {data.matches.map((game: any) => {
                 const isWhite = game.whitePlayerId === session?.user?.id;
                 const opponent = isWhite ? game.blackPlayer : game.whitePlayer;
                 const result = game.result;

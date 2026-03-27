@@ -1,11 +1,9 @@
 import { signIn } from "@/auth";
-import db from "@repo/db";
+import axios from "axios";
 import Image from "next/image";
 
-export const dynamic = "force-dynamic";
-
 export default async function Login() {
-  const usercount = await db.game.count();
+  const { data } = await axios("https://localhost:3001/count/game");
 
   return (
     <div className="relative flex min-h-screen w-full items-center justify-center bg-stone-950 px-4 py-12">
@@ -47,7 +45,7 @@ export default async function Login() {
           </form>
 
           <p className="text-xs uppercase tracking-[0.28em] text-stone-500">
-            {usercount} game{usercount === 1 ? "" : "s"} played
+            {data.count} game{data.count < 2 ? "" : "s"} going!
           </p>
 
           <p className="text-sm text-stone-400">
