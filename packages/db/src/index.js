@@ -7,11 +7,11 @@ const connectionString = `${process.env.DATABASE_URL}`;
 const adapter = new adapter_pg_1.PrismaPg({ connectionString });
 const db = new client_1.PrismaClient({ adapter });
 db.$connect()
-    .then(() => {
+  .then(() => {
     console.log("Connected to the database");
-})
-    .catch((error) => {
+  })
+  .catch((error) => {
     console.error("Error connecting to the database:", error);
     process.exit(1);
-});
+  });
 exports.default = db;

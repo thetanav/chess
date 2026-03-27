@@ -22,7 +22,8 @@ export default async function RootLayout({
         className={
           inter.className +
           " bg-gradient-to-b from-stone-900 via-stone-800 to-stone-900 text-white w-full min-h-screen antialiased"
-        }>
+        }
+      >
         <NextTopLoader
           color="#eab308"
           height={3}

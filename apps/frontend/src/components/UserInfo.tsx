@@ -27,9 +27,7 @@ export function UserInfo({ id }: { id: string }) {
           className="h-9 w-9 rounded-full object-cover ring-1 ring-white/10"
         />
       )}
-      <span className="truncate max-w-[10rem]">
-        {name || "Waiting for player"}
-      </span>
+      <span className="truncate max-w-[10rem]">{name || "Waiting for player"}</span>
     </div>
   );
 }

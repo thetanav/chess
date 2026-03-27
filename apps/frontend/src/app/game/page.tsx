@@ -33,13 +33,11 @@ export default function Game() {
   const [you, setYou] = useState("");
   const [opponent, setOpponent] = useState("");
   const [moveAudio] = useState<HTMLAudioElement | null>(() => {
-    if (typeof window === "undefined" || typeof Audio === "undefined")
-      return null;
+    if (typeof window === "undefined" || typeof Audio === "undefined") return null;
     return new Audio("/move-self.mp3");
   });
   const [captureAudio] = useState<HTMLAudioElement | null>(() => {
-    if (typeof window === "undefined" || typeof Audio === "undefined")
-      return null;
+    if (typeof window === "undefined" || typeof Audio === "undefined") return null;
     return new Audio("/capture.mp3");
   });
   const session = useSession();
@@ -131,9 +129,7 @@ export default function Game() {
             mychance={mychance}
             isFlipped={color == "white" ? false : true}
           />
-          <div className="w-full max-w-[28rem] text-center">
-            {you && <UserInfo id={you} />}
-          </div>
+          <div className="w-full max-w-[28rem] text-center">{you && <UserInfo id={you} />}</div>
         </div>
 
         <aside className="card w-full max-w-sm px-6 py-7">
@@ -149,25 +145,18 @@ export default function Game() {
                   {mychance ? "Your turn" : "Opponent turn"}
                 </h2>
                 {opponent && (
-                  <UserImage
-                    id={opponent}
-                    color={color == "white" ? "black" : "white"}
-                  />
+                  <UserImage id={opponent} color={color == "white" ? "black" : "white"} />
                 )}
               </div>
               <div className="space-y-3">
-                <p className="text-xs uppercase tracking-[0.32em] text-stone-500">
-                  Move log
-                </p>
+                <p className="text-xs uppercase tracking-[0.32em] text-stone-500">Move log</p>
                 <ol className="grid max-h-96 grid-cols-[1fr_auto_1fr] gap-x-4 gap-y-2 overflow-y-auto pr-1 text-sm text-stone-300">
                   {moves.map((move) => (
                     <li key={move.from + move.to} className="contents">
                       <span className="rounded-md bg-white/5 px-2 py-1 text-right font-semibold uppercase tracking-wide">
                         {move.from}
                       </span>
-                      <span className="text-center text-xs text-stone-500">
-                        →
-                      </span>
+                      <span className="text-center text-xs text-stone-500">→</span>
                       <span className="rounded-md bg-white/5 px-2 py-1 font-semibold uppercase tracking-wide">
                         {move.to}
                       </span>
@@ -188,28 +177,20 @@ export default function Game() {
       {!started && (
         <div className="absolute inset-0 z-20 flex items-center justify-center bg-black/50 backdrop-blur-md">
           <div className="card w-full max-w-md px-10 py-9 text-center">
-            <h1 className="text-2xl font-bold text-stone-100">
-              Play chess online
-            </h1>
+            <h1 className="text-2xl font-bold text-stone-100">Play chess online</h1>
 
             {winner && (
               <div className="mt-6 flex flex-col items-center gap-3">
                 <Confetti width={width} height={height} recycle={false} />
-                {winner.user && (
-                  <UserImage id={winner.user} color={winner.winner} />
-                )}
+                {winner.user && <UserImage id={winner.user} color={winner.winner} />}
                 <h3 className="text-lg font-semibold uppercase text-stone-100">
-                  {winner.winner === "DRAW"
-                    ? "It's a draw!"
-                    : `${winner.winner} wins`}
+                  {winner.winner === "DRAW" ? "It's a draw!" : `${winner.winner} wins`}
                 </h3>
               </div>
             )}
 
             {pending && (
-              <p className="mt-6 text-sm text-stone-400">
-                Waiting for another player to join…
-              </p>
+              <p className="mt-6 text-sm text-stone-400">Waiting for another player to join…</p>
             )}
 
             {!pending && (
@@ -249,14 +230,16 @@ export default function Game() {
                           }),
                         );
                         setPending(true);
-                      }}>
+                      }}
+                    >
                       Find a match
                     </button>
                   </>
                 ) : (
                   <button
                     onClick={() => signIn("google")}
-                    className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-2 text-sm font-semibold text-stone-100 transition-colors hover:bg-white/10">
+                    className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-6 py-2 text-sm font-semibold text-stone-100 transition-colors hover:bg-white/10"
+                  >
                     Sign in with Google
                   </button>
                 )}

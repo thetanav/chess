@@ -38,9 +38,7 @@ export const ChessBoard = ({
   isFlipped: boolean;
 }) => {
   const [from, setFrom] = useState<null | Square>(null);
-  const [moveAudio] = useState<HTMLAudioElement>(
-    () => new Audio("/move-self.mp3")
-  );
+  const [moveAudio] = useState<HTMLAudioElement>(() => new Audio("/move-self.mp3"));
   const [draggedSquare, setDraggedSquare] = useState<null | Square>(null);
   const [hoveredSquare, setHoveredSquare] = useState<null | Square>(null);
 
@@ -59,7 +57,7 @@ export const ChessBoard = ({
             from: fromSquare,
             to: toSquare,
           },
-        })
+        }),
       );
       setMoves((prev: any) => [
         ...prev,
@@ -90,12 +88,9 @@ export const ChessBoard = ({
             <div key={rank} className="flex">
               {orientedCols.map((square, colIndex) => {
                 const file = isFlipped ? 7 - (colIndex % 8) : colIndex % 8;
-                const squareRepresentation = (String.fromCharCode(97 + file) +
-                  "" +
-                  rank) as Square;
+                const squareRepresentation = (String.fromCharCode(97 + file) + "" + rank) as Square;
                 const isOrigin = from === squareRepresentation;
-                const isTarget =
-                  hoveredSquare === squareRepresentation && draggedSquare;
+                const isTarget = hoveredSquare === squareRepresentation && draggedSquare;
 
                 return (
                   <div
@@ -123,18 +118,15 @@ export const ChessBoard = ({
                       }
                     }}
                     className={`relative flex h-[3.75rem] w-[3.75rem] select-none transition-[transform,filter] duration-200 ease-out sm:h-16 sm:w-16 md:h-[4.5rem] md:w-[4.5rem] ${
-                      (rank + file) % 2 === 0
-                        ? "bg-chess-light"
-                        : "bg-chess-dark"
+                      (rank + file) % 2 === 0 ? "bg-chess-light" : "bg-chess-dark"
                     } ${
                       isTarget
                         ? "ring-2 ring-emerald-400/40 ring-offset-2 ring-offset-stone-950"
                         : ""
                     } ${
-                      isOrigin
-                        ? "ring-2 ring-amber-400/60 ring-offset-2 ring-offset-stone-950"
-                        : ""
-                    }`}>
+                      isOrigin ? "ring-2 ring-amber-400/60 ring-offset-2 ring-offset-stone-950" : ""
+                    }`}
+                  >
                     {started && (
                       <div className="flex h-full w-full items-center justify-center">
                         <div className="flex h-full flex-col items-center justify-center">

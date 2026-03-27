@@ -9,12 +9,12 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        'chess': {
+        chess: {
           dark: "#739552",
-          light: "#ebecd0"
+          light: "#ebecd0",
         },
       },
-    }
+    },
   },
   plugins: [],
 };

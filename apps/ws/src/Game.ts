@@ -113,12 +113,7 @@ export class Game {
           whitePlayer: { connect: { id: this.player1.id } },
           blackPlayer: { connect: { id: this.player2.id } },
           status: "COMPLETED",
-          result:
-            winner == "DRAW"
-              ? "DRAW"
-              : this.moveCount % 2
-                ? "WHITE_WINS"
-                : "BLACK_WINS",
+          result: winner == "DRAW" ? "DRAW" : this.moveCount % 2 ? "WHITE_WINS" : "BLACK_WINS",
           startAt: this.startTime,
           endAt: new Date(),
           currentFen: this.board.fen(),
@@ -129,12 +124,7 @@ export class Game {
         JSON.stringify({
           type: GAME_OVER,
           payload: {
-            winner:
-              winner === "DRAW"
-                ? "DRAW"
-                : this.board.turn() === "w"
-                  ? "black"
-                  : "white",
+            winner: winner === "DRAW" ? "DRAW" : this.board.turn() === "w" ? "black" : "white",
             user: winner === "DRAW" ? null : winner.id,
           },
         }),
@@ -143,12 +133,7 @@ export class Game {
         JSON.stringify({
           type: GAME_OVER,
           payload: {
-            winner:
-              winner === "DRAW"
-                ? "DRAW"
-                : this.board.turn() === "w"
-                  ? "black"
-                  : "white",
+            winner: winner === "DRAW" ? "DRAW" : this.board.turn() === "w" ? "black" : "white",
             user: winner === "DRAW" ? null : winner.id,
           },
         }),

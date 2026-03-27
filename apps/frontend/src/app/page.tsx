@@ -1,11 +1,11 @@
-import { auth, signIn, signOut } from "@/auth";
+import { getSession, signIn, signOut } from "@/lib/auth-client";
 import axios from "axios";
 import Image from "next/image";
 import Link from "next/link";
-import { Suspense, use } from "react";
+import { Suspense } from "react";
 
 export default async function Home() {
-  const session = await auth();
+  const { data: session } = await getSession();
   const { data } = await axios.post("https://localhost:3001/games", {
     userId: session?.user?.id,
   });
@@ -34,17 +34,17 @@ export default async function Home() {
                   className="h-9 w-9 rounded-full object-cover"
                 />
               )}
-              <span className="text-sm font-medium text-stone-200">
-                {session.user.name}
-              </span>
+              <span className="text-sm font-medium text-stone-200">{session.user.name}</span>
               <form
                 action={async () => {
                   "use server";
                   await signOut();
-                }}>
+                }}
+              >
                 <button
                   type="submit"
-                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-stone-50 transition-colors hover:bg-white/20">
+                  className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-stone-50 transition-colors hover:bg-white/20"
+                >
                   Sign out
                 </button>
               </form>
@@ -53,11 +53,15 @@ export default async function Home() {
             <form
               action={async () => {
                 "use server";
-                await signIn("google");
-              }}>
+                await signIn.social({
+                  provider: "google",
+                });
+              }}
+            >
               <button
                 type="submit"
-                className="rounded-full border border-amber-400/30 bg-amber-400/20 px-4 py-2 text-sm font-semibold text-amber-200 transition-colors hover:bg-amber-400/30">
+                className="rounded-full border border-amber-400/30 bg-amber-400/20 px-4 py-2 text-sm font-semibold text-amber-200 transition-colors hover:bg-amber-400/30"
+              >
                 Sign in
               </button>
             </form>
@@ -71,12 +75,10 @@ export default async function Home() {
             <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
               <div className="flex items-center gap-4">
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-black sm:text-4xl">
-                    Find your next opponent.
-                  </h1>
+                  <h1 className="text-3xl font-black sm:text-4xl">Find your next opponent.</h1>
                   <p className="text-sm leading-relaxed text-stone-300 sm:text-base">
-                    Queue up for a live match or invite a friend. Every move is
-                    synced instantly through our realtime servers.
+                    Queue up for a live match or invite a friend. Every move is synced instantly
+                    through our realtime servers.
                   </p>
                 </div>
               </div>
@@ -95,13 +97,10 @@ export default async function Home() {
               ].map((stat) => (
                 <div
                   key={stat.label}
-                  className="rounded-2xl border border-white/5 bg-white/5 px-5 py-4">
-                  <p className="text-xs uppercase tracking-[0.18em] text-stone-400">
-                    {stat.label}
-                  </p>
-                  <p className="mt-2 text-xl font-semibold text-stone-50">
-                    {stat.value}
-                  </p>
+                  className="rounded-2xl border border-white/5 bg-white/5 px-5 py-4"
+                >
+                  <p className="text-xs uppercase tracking-[0.18em] text-stone-400">{stat.label}</p>
+                  <p className="mt-2 text-xl font-semibold text-stone-50">{stat.value}</p>
                 </div>
               ))}
             </div>
@@ -109,9 +108,7 @@ export default async function Home() {
 
           <section className="space-y-4">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-stone-100">
-                Play styles
-              </h2>
+              <h2 className="text-lg font-semibold text-stone-100">Play styles</h2>
               <span className="text-xs uppercase tracking-[0.32em] text-stone-500">
                 Choose mode
               </span>
@@ -125,7 +122,8 @@ export default async function Home() {
                 <Link
                   key={m.label}
                   className="card card-hover group relative overflow-hidden px-5 py-6"
-                  href={m.href}>
+                  href={m.href}
+                >
                   <Image
                     src="/chessboard.png"
                     alt="board"
@@ -134,9 +132,7 @@ export default async function Home() {
                     className="pointer-events-none absolute inset-0 h-full w-full scale-105 select-none opacity-0 transition-opacity duration-300 group-hover:opacity-40"
                   />
                   <div className="relative flex h-full flex-col justify-between gap-10">
-                    <p className="text-sm font-semibold text-stone-100">
-                      {m.label}
-                    </p>
+                    <p className="text-sm font-semibold text-stone-100">{m.label}</p>
                     <span className="text-xs uppercase tracking-[0.28em] text-stone-400">
                       Queue →
                     </span>
@@ -149,19 +145,14 @@ export default async function Home() {
 
         <section className="card card-hover h-fit px-7 py-7">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-stone-100">
-              Game history
-            </h2>
+            <h2 className="text-lg font-semibold text-stone-100">Game history</h2>
             <span className="text-xs text-stone-500">
-              {data.matches.length}{" "}
-              {data.matches.length === 1 ? "match" : "matches"}
+              {data.matches.length} {data.matches.length === 1 ? "match" : "matches"}
             </span>
           </div>
 
           {data.matches.length === 0 ? (
-            <p className="mt-6 text-sm text-stone-400">
-              No past games yet. Play your first match!
-            </p>
+            <p className="mt-6 text-sm text-stone-400">No past games yet. Play your first match!</p>
           ) : (
             <ul className="mt-6 space-y-4">
               {data.matches.map((game: any) => {
@@ -177,7 +168,8 @@ export default async function Home() {
                 return (
                   <li
                     key={game.id}
-                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 px-5 py-4">
+                    className="flex items-center justify-between gap-4 rounded-2xl border border-white/5 bg-white/5 px-5 py-4"
+                  >
                     <div className="flex items-center gap-3">
                       {opponent.image && (
                         <Image
@@ -193,9 +185,7 @@ export default async function Home() {
                           vs {opponent.name ?? "Unknown"}
                         </p>
                         <p className="text-xs text-stone-500">
-                          {game.endAt
-                            ? new Date(game.endAt).toLocaleDateString()
-                            : "Unknown"}
+                          {game.endAt ? new Date(game.endAt).toLocaleDateString() : "Unknown"}
                           {" • "}
                           {game.status.replace("_", " ").toLowerCase()}
                         </p>
@@ -208,7 +198,8 @@ export default async function Home() {
                           : outcome === "Lost"
                             ? "bg-rose-400/20 text-rose-300"
                             : "bg-amber-400/20 text-amber-300"
-                      }`}>
+                      }`}
+                    >
                       {outcome}
                     </span>
                   </li>

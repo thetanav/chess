@@ -32,14 +32,12 @@ export class GameManager {
       if (game.player1.socket === socket || game.player2.socket === socket) {
         // notify the other player that the game has ended
         const otherPlayerSocket =
-          game.player1.socket === socket
-            ? game.player2.socket
-            : game.player1.socket;
+          game.player1.socket === socket ? game.player2.socket : game.player1.socket;
         otherPlayerSocket.send(
           JSON.stringify({
             type: OPPONENT_DISCONNECTED,
             payload: { message: "Opponent Disconnected" },
-          })
+          }),
         );
         return false; // remove this game
       }
@@ -63,9 +61,7 @@ export class GameManager {
 
       if (message.type === MOVE) {
         const game = this.games.find(
-          (game) =>
-            game.player1.socket === user.socket ||
-            game.player2.socket === user.socket
+          (game) => game.player1.socket === user.socket || game.player2.socket === user.socket,
         );
         if (game) {
           game.makeMove(user.socket, message.payload);

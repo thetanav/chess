@@ -2,7 +2,7 @@ import express from "express";
 import db from "@repo/db";
 import cors from "cors";
 import { fromNodeHeaders, toNodeHandler } from "better-auth/node";
-import { auth } from "auth";
+import { auth } from "./auth";
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.use(
   }),
 );
 
-app.all("/auth/*", toNodeHandler(auth));
+app.all("/api/auth/*", toNodeHandler(auth));
 
 app.use(express.json());
 
@@ -38,9 +38,9 @@ app.get("/dp/:id", async (req, res) => {
   });
 
   if (user) {
-    return Response.json({ name: user.name, image: user.image });
+    return res.json({ name: user.name, image: user.image });
   }
-  return Response.json({
+  return res.json({
     name: "unknown",
     image:
       "https://img.freepik.com/premium-vector/man-avatar-profile-picture-vector-illustration_268834-538.jpg",

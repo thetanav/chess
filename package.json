@@ -8,6 +8,11 @@
     "typecheck": "turbo typecheck",
     "format": "prettier --write \"**/*.{ts,tsx,md}\""
   },
+  "dependencies": {
+    "react-confetti": "^6.1.0",
+    "react-use": "^17.5.1",
+    "use-sound": "^4.0.3"
+  },
   "devDependencies": {
     "autoprefixer": "^10.4.19",
     "postcss": "^8.4.38",
@@ -19,10 +24,5 @@
   "engines": {
     "node": ">=18"
   },
-  "packageManager": "pnpm@10.27.0",
-  "dependencies": {
-    "react-confetti": "^6.1.0",
-    "react-use": "^17.5.1",
-    "use-sound": "^4.0.3"
-  }
+  "packageManager": "pnpm@10.27.0"
 }
