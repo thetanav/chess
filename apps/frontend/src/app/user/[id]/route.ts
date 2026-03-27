@@ -1,8 +1,8 @@
-import { db } from "@/db";
+import db from "@repo/db";
 
 export async function GET(
   request: Request,
-  props: { params: Promise<{ id: string }> }
+  props: { params: Promise<{ id: string }> },
 ) {
   const params = await props.params;
   const user = await db.user.findUnique({

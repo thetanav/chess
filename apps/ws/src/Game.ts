@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { Chess } from "chess.js";
 import { GAME_OVER, INIT_GAME, MOVE, INVALID_MOVE } from "./messages";
-import { db } from "./db";
+import prisma from "@repo/db/client";
 
 interface User {
   id: string;
@@ -108,7 +108,7 @@ export class Game {
       }
 
       // save it to db
-      await db.game.create({
+      await prisma.game.create({
         data: {
           whitePlayer: { connect: { id: this.player1.id } },
           blackPlayer: { connect: { id: this.player2.id } },

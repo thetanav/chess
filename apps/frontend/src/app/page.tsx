@@ -1,5 +1,5 @@
 import { auth, signIn, signOut } from "@/auth";
-import { db } from "@/db";
+import db from "@repo/db";
 import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";

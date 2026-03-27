@@ -1,5 +1,5 @@
 import { signIn } from "@/auth";
-import { db } from "@/db";
+import db from "@repo/db";
 import Image from "next/image";
 
 export const dynamic = "force-dynamic";
@@ -38,12 +38,10 @@ export default async function Login() {
               "use server";
               await signIn("google");
             }}
-            className="inline-flex"
-          >
+            className="inline-flex">
             <button
               type="submit"
-              className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-6 py-2 text-sm font-semibold text-stone-100 transition-transform duration-200 hover:-translate-y-[2px] hover:bg-white/20"
-            >
+              className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/10 px-6 py-2 text-sm font-semibold text-stone-100 transition-transform duration-200 hover:-translate-y-[2px] hover:bg-white/20">
               Continue with Google
             </button>
           </form>
@@ -57,8 +55,7 @@ export default async function Login() {
             <a
               href="https://x.com/tanavtwt"
               className="underline-offset-4 transition hover:underline"
-              target="_blank"
-            >
+              target="_blank">
               tanav
             </a>
           </p>
