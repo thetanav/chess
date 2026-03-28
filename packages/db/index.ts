@@ -1,19 +1,16 @@
-import "dotenv/config";
+import path from "node:path";
 import { PrismaPg } from "@prisma/adapter-pg";
+import dotenv from "dotenv";
 import { PrismaClient } from "./generated/prisma/client";
+export { Prisma, PrismaClient } from "./generated/prisma/client";
 
-const connectionString = `${process.env.DATABASE_URL}`;
+dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
-const adapter = new PrismaPg({ connectionString });
-const db = new PrismaClient({ adapter });
+const connectionUrl = new URL(process.env.DATABASE_URL!);
+connectionUrl.searchParams.delete("channel_binding");
 
-db.$connect()
-  .then(() => {
-    console.log("Connected to the database");
-  })
-  .catch((error: unknown) => {
-    console.error("Error connecting to the database:", error);
-    process.exit(1);
-  });
+const db: PrismaClient = new PrismaClient({
+  adapter: new PrismaPg(connectionUrl.toString()),
+});
 
 export default db;

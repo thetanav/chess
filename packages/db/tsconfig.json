@@ -5,6 +5,6 @@
     "rootDir": ".",
     "strictNullChecks": true
   },
-  "include": ["index.ts", "prisma.config.ts"],
+  "include": ["index.ts"],
   "exclude": ["node_modules", "dist"]
 }

@@ -14,11 +14,11 @@
     }
   },
   "scripts": {
-    "postinstall": "pnpm run generate",
+    "postinstall": "bun run generate",
     "build": "tsc -b",
-    "generate": "pnpm exec prisma generate",
-    "push": "pnpm exec prisma db push",
-    "migrate": "pnpm exec prisma db migrate dev",
+    "generate": "bunx prisma generate",
+    "push": "bunx prisma db push",
+    "migrate": "bunx prisma migrate dev",
     "test": "echo \"Error: no test specified\" && exit 1",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint"
