@@ -2,13 +2,16 @@
   "name": "@repo/db",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/src/index.js",
-  "types": "./dist/src/index.d.ts",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
   "keywords": [],
   "license": "ISC",
   "author": "",
   "exports": {
-    ".": "./src/index.ts"
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
   },
   "scripts": {
     "postinstall": "pnpm run generate",
